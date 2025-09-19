@@ -13,7 +13,6 @@ var exp = (function() {
 
     const doingOrWatching = ["doing", "watching"][playCondition];
 
-    console.log(playOrWatch)
     const settings = {
         pM: .5,
         pM_practice: .5,
@@ -137,7 +136,7 @@ var exp = (function() {
                 ];
                 const round2_Qs = [
                     {
-                      prompt: `When ${tileActivate}in the ${gameName}, what are your chances of winning tokens?`, 
+                      prompt: `When ${tileActivate} in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk1', 
                       options: ['10%', '40%', '60%', '90%'], 
                       required: true
