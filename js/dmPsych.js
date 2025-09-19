@@ -322,6 +322,9 @@ const dmPsych = (function() {
       trial_duration: () => {
         return (tooFast) ? 3500 : 0;
       },
+      on_finish: (data) => {
+        data.trialNum = trialNumber;
+      },
     };
 
     const delayLoop = {
