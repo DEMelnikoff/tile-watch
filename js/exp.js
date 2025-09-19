@@ -7,7 +7,12 @@ var exp = (function() {
 
     const pEMOrder = Math.floor(Math.random() * 2);
 
-    const playOrWatch = ["play", "watch"][Math.floor(Math.random() * 2)];
+    const playCondition = Math.floor(Math.random() * 2);
+
+    const playOrWatch = ["play", "watch"][playCondition];
+
+    const doingOrWatching = ["doing", "watching"][playCondition];
+
     console.log(playOrWatch)
     const settings = {
         pM: .5,
@@ -233,11 +238,11 @@ var exp = (function() {
     *
     */
 
-    p.practice1 = new dmPsych.MakeTileGame(settings.hex_1, settings.tileHit_1, settings.tileMiss, settings.roundLength, settings.gameType, 10, settings.pM_practice, 1, 'practice', 0);
+    p.practice1 = new dmPsych.MakeTileGame(settings.hex_1, settings.tileHit_1, settings.tileMiss, settings.roundLength, settings.gameType, 10, settings.pM_practice, 1, 'practice', 0, playOrWatch);
 
-    p.round1 = new dmPsych.MakeTileGame(settings.hex_1, settings.tileHit_1, settings.tileMiss, settings.roundLength, settings.gameType, settings.nTrials, settings.pM, settings.pEM[0], 'tileGame', 1);
+    p.round1 = new dmPsych.MakeTileGame(settings.hex_1, settings.tileHit_1, settings.tileMiss, settings.roundLength, settings.gameType, settings.nTrials, settings.pM, settings.pEM[0], 'tileGame', 1, playOrWatch);
 
-    p.round2 = new dmPsych.MakeTileGame(settings.hex_2, settings.tileHit_2, settings.tileMiss, settings.roundLength, settings.gameType, settings.nTrials, settings.pM, settings.pEM[1], 'tileGame', 2);
+    p.round2 = new dmPsych.MakeTileGame(settings.hex_2, settings.tileHit_2, settings.tileMiss, settings.roundLength, settings.gameType, settings.nTrials, settings.pM, settings.pEM[1], 'tileGame', 2, playOrWatch);
 
    /*
     *
@@ -251,24 +256,15 @@ var exp = (function() {
 
     // constructor functions
 
-    const flowQs = function(name, round) {
+    const flowSingle = function(name, round) {
         this.type = jsPsychSurveyLikert;
         this.preamble = `<div style='padding-top: 50px; width: 850px; font-size:16px'>
 
-        <p>To report how immersed and engaged you felt in the ${name},<br>please answer the following questions as honestly as possible.</p>`;
+        <p>To report how immersed and engaged you felt in the ${name},<br>please answer the following question as honestly as possible.</p>`;
         this.questions = [
-            {prompt: `During the ${name}, how <strong>immersed</strong> did you feel in what you were doing?`,
-            name: `immersed`,
-            labels: ["0<br>Not very immersed", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>More immersed than I've ever felt"]},
-            {prompt: `During the ${name}, how <strong>engaged</strong> did you feel in what you were doing?`,
-            name: `engaged`,
-            labels: ["0<br>Not very engaged", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>More engaged than I've ever felt"]},
-            {prompt: `During the ${name}, how <strong>engrossed</strong> did you feel in what you were doing?`,
-            name: `engrossed`,
-            labels: ["0<br>Not very engrossed", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>More engrossed than I've ever felt"]},
-            {prompt: `During the ${name}, how <strong>absorbed</strong> did you feel in what you were doing?`,
-            name: `absorbed`,
-            labels: ["0<br>Not at all absorbed", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely absorbed"]},
+            {prompt: `During the ${name},<br>how <b>immersed</b> and <b>engaged</b> did you feel in what you were ${doingOrWatching}?`,
+            name: `flow`,
+            labels: ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Extremely']},
         ];
         this.randomize_question_order = false;
         this.scale_width = 700;
@@ -278,45 +274,54 @@ var exp = (function() {
         };
     };
 
-    var enjoyQs = function(name, round) {
+    const flowQs = function(name, round) {
         this.type = jsPsychSurveyLikert;
         this.preamble = `<div style='padding-top: 50px; width: 850px; font-size:16px'>
 
-        <p>Below are a few more questions about the ${name}.</p>
-
-        <p>Instead of asking about immersion and engagement, these questions ask about <strong>enjoyment</strong>.<br>
-        Report how much you <strong>enjoyed</strong> the ${name} by answering the following questions.</p></div>`;
+        <p>To report how immersed and engaged you felt in the ${name},<br>please answer the following questions as honestly as possible.</p>`;
         this.questions = [
-            {prompt: `How much did you <strong>enjoy</strong> playing the ${name}?`,
-            name: `enjoyable`,
-            labels: zeroToALot},
-            {prompt: `How much did you <strong>like</strong> playing the ${name}?`,
-            name: `like`,
-            labels: zeroToALot},
-            {prompt: `How much did you <strong>dislike</strong> playing the ${name}?`,
-            name: `dislike`,
-            labels: zeroToALot},
-            {prompt: `How much <strong>fun</strong> did you have playing the ${name}?`,
-            name: `fun`,
-            labels: zeroToALot},
-            {prompt: `How <strong>entertaining</strong> was the ${name}?`,
-            name: `entertaining`,
-            labels: zeroToExtremely},
+            {prompt: `During the ${name}, how <strong>immersed</strong> did you feel in what you were ${doingOrWatching}?`,
+            name: `immersed`,
+            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            {prompt: `During the ${name}, how <strong>engaged</strong> did you feel in what you were ${doingOrWatching}?`,
+            name: `engaged`,
+            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            {prompt: `During the ${name}, how <strong>engrossed</strong> did you feel in what you were ${doingOrWatching}?`,
+            name: `engrossed`,
+            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            {prompt: `During the ${name}, how <strong>absorbed</strong> did you feel in what you were ${doingOrWatching}?`,
+            name: `absorbed`,
+            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
         ];
         this.randomize_question_order = false;
         this.scale_width = 700;
         this.data = {round: round};
-        this.on_finish = (data) => {
+        this.on_finish =(data) => {
+            dmPsych.saveSurveyData(data);
+        };
+    };
+
+    const happiness = function(round) {
+        this.type = jsPsychSurveyLikert;
+        this.questions = [
+            {prompt: `How <b>happy</b> are you right now?`,
+            name: `flow`,
+            labels: ['0<br>Very Unhappy', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Very Happy']},
+        ];
+        this.randomize_question_order = false;
+        this.scale_width = 700;
+        this.data = {round: round};
+        this.on_finish =(data) => {
             dmPsych.saveSurveyData(data);
         };
     };
     
     p.round1_Qs = {
-        timeline: [new flowQs(settings.gameName_1, 1), new enjoyQs(settings.gameName_1, 1)]
+        timeline: [new flowSingle(settings.gameName_1, 1), new flowQs(settings.gameName_1, 1), new happiness(1)]
     };
 
     p.round2_Qs = {
-        timeline: [new flowQs(settings.gameName_2, 2), new enjoyQs(settings.gameName_2, 2)]
+        timeline: [new flowSingle(settings.gameName_2, 2), new flowQs(settings.gameName_2, 2), new happiness(2)]
     };
 
     p.demographics = (function() {
@@ -423,7 +428,7 @@ var exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "D5bjZynalRzb",
+        experiment_id: "euFTyBCqe4uJ",
         filename: dmPsych.filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

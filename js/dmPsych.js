@@ -186,7 +186,7 @@ const dmPsych = (function() {
   // create tile game
   obj.MakeTileGame = function(hex, tileHit, tileMiss, roundLength, gameType, nTrials, pM, pEM, blockName, roundNum, playOrWatch) {
 
-    let losses = 0, round = 1, streak = 0, trialNumber = 0, tooSlow = null, tooFast = null, totalTokens = 0, message;
+    let losses = 0, round = 1, streak = 0, trialNumber = 0, tooSlow = null, tooFast = null, latency = null, totalTokens = 0, message;
 
     const bernTokens_hit = (gameType == 'bern-mod-PE') ? 15 : 10;
 
@@ -265,7 +265,6 @@ const dmPsych = (function() {
       return jsPsych.randomization.repeat(unshuffledArray, 1);
     };
 
-    const latency = dmPsych.makeRT(nTrials, pM, roundLength, gameType);
     let winArray = makeFeedbackArray();
     let lossArray = makeFeedbackArray();
     let tokenArray_miss = makeTokenArray_miss();
@@ -339,13 +338,31 @@ const dmPsych = (function() {
         const header = (gameType == "strk" | gameType == "strk-mod") ? `Current Streak: ${streak}` : (gameType == "1inN") ? `Attempts remaining: ${6 - losses}` : "";
         return probe_html.replace("{header}", header);
       },
-      choices: [" "],
-      trial_duration: () => { 
-        return latency[trialNumber] 
+      choices: () => {
+        if (playOrWatch == "play") {
+          return [" "]
+        } else {
+          return "NO_KEYS"
+        }
+
+      },
+      trial_duration: () => {
+        if (trialNumber == nTrials - 1) {
+          latency = 200;
+        } else if (playOrWatch == "play") {
+          latency = (Math.random() < .5) ? 200 : 750;
+        } else if (playOrWatch == "watch") {
+          latency = (Math.random() < .5) ? 200 : 300;
+        }
+        return latency;
       },
       on_finish: (data) => {
-        data.probeDuration = latency[trialNumber];
-        (data.response && trialNumber < nTrials - 1) ? tooSlow = 0 : tooSlow = 1;
+        data.probeDuration = latency;
+        if (playOrWatch == "play") {
+          (data.response && trialNumber < nTrials - 1) ? tooSlow = 0 : tooSlow = 1;
+        } else {
+          (latency == 200 && trialNumber < nTrials - 1) ? tooSlow = 0 : tooSlow = 1;
+        }
         data.tooSlow = tooSlow;
         data.trialNum = trialNumber;
       },
@@ -362,11 +379,18 @@ const dmPsych = (function() {
           return tileMiss.replace("{header}", header);
         }
       },
-      choices: [" "],
+      choices: () => {
+        if (playOrWatch == "play") {
+          return [" "]
+        } else {
+          return "NO_KEYS"
+        }
+
+      },
       response_ends_trial: false,
       trial_duration: 1000,
       on_finish: (data) => {
-        data.rt_adjusted = data.rt + latency[trialNumber];
+        data.rt_adjusted = data.rt + latency;
         data.trialNum = trialNumber;
       }
     };
@@ -380,11 +404,11 @@ const dmPsych = (function() {
           if (tooSlow) {
             message = (getTokens && blockName !== "practice") ? tokens_html : noTokens_html;
             if (blockName !== "practice") totalTokens += bernTokens_miss;            
-            if (tokenArray_miss.length == 0) lossArray = makeFeedbackArray();    
+            if (tokenArray_miss.length == 0) tokenArray_miss = makeTokenArray_miss();    
           } else {
             message = (!getTokens && blockName !== "practice") ? noTokens_html : tokens_html;
             if (blockName !== "practice") totalTokens += bernTokens_hit;
-            if (tokenArray_hit.length == 0) winArray = makeFeedbackArray();          
+            if (tokenArray_hit.length == 0) tokenArray_hit = makeTokenArray_hit();          
           };
           round++;
           return message.replace('{header}', '');
@@ -509,8 +533,20 @@ const dmPsych = (function() {
           return message;
         };
       },
-      choices: "NO_KEYS",
-      trial_duration: 2000,
+      choices: () => {
+        if (playOrWatch == "play") {
+          return "NO_KEYS" 
+        } else {
+          return [" "]
+        }
+      },
+      trial_duration: () => {
+        if (playOrWatch == "play") {
+          return 2000
+        } else {
+          return null
+        }
+      },
       on_finish: (data) => {
         trialNumber++;
         if (trialNumber == nTrials) { 
@@ -534,7 +570,9 @@ const dmPsych = (function() {
   };
 
   // make n-dimensional array of RTs given p(hit) = p
-  obj.makeRT = function(nTrials, pWin, roundLength, gameType) {
+  obj.makeRT = function(nTrials, pWin, roundLength, gameType, playOrWatch) {
+
+    const hitSpeed = (playOrWatch == "play") ? 750 : 300;
 
     const nTrialPerHalf = nTrials / 2;
     const nWinsPerHalf = Math.round(nTrialPerHalf * pWin);
@@ -543,14 +581,14 @@ const dmPsych = (function() {
     let rtArray = [];
 
     // first half
-    let winArray1 = Array(nWinsPerHalf).fill(750);
+    let winArray1 = Array(nWinsPerHalf).fill(hitSpeed);
     let lossArray1 = Array(nLossPerHalf).fill(200);
     let concatArray1 = winArray1.concat(lossArray1);
     let shuffledArray1 = jsPsych.randomization.repeat(concatArray1, 1);
     rtArray.push(...shuffledArray1);
 
     // second half
-    let winArray2 = Array(nWinsPerHalf).fill(750);
+    let winArray2 = Array(nWinsPerHalf).fill(hitSpeed);
     let lossArray2 = Array(nLossPerHalf - 1).fill(200);
     let concatArray2 = winArray2.concat(lossArray2);
     let shuffledArray2 = jsPsych.randomization.repeat(concatArray2, 1);
@@ -1956,6 +1994,11 @@ const dmPsych = (function() {
                   `<div class='parent' style='height: 550px'>
                     <p>If you don't win tokens, you'll see this message:</p>
                     <div class="token-text-lose">${signedOutcome} Tokens</div>
+                  </div>`,
+
+                  `<div class='parent' style='height: 550px'>
+                    <p>After seeing whether you won tokens or not,<br>
+                    you must press your SPACEBAR to advance to the next tile.</p>
                   </div>`];            
           }
           
