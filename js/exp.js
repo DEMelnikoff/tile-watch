@@ -286,16 +286,16 @@ var exp = (function() {
         this.questions = [
             {prompt: `During the ${name}, how <strong>immersed</strong> did you feel in what you were ${doingOrWatching}?`,
             name: `immersed`,
-            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            labels: ["0<br>A little", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
             {prompt: `During the ${name}, how <strong>engaged</strong> did you feel in what you were ${doingOrWatching}?`,
             name: `engaged`,
-            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            labels: ["0<br>A little", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
             {prompt: `During the ${name}, how <strong>engrossed</strong> did you feel in what you were ${doingOrWatching}?`,
             name: `engrossed`,
-            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            labels: ["0<br>A little", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
             {prompt: `During the ${name}, how <strong>absorbed</strong> did you feel in what you were ${doingOrWatching}?`,
             name: `absorbed`,
-            labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
+            labels: ["0<br>A little", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
         ];
         this.randomize_question_order = false;
         this.scale_width = 600;
@@ -309,7 +309,7 @@ var exp = (function() {
         this.type = jsPsychSurveyLikert;
         this.questions = [
             {prompt: `How <b>happy</b> are you right now?`,
-            name: `flow`,
+            name: `happiness`,
             labels: ['0<br>Very Unhappy', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Very Happy']},
         ];
         this.randomize_question_order = false;

@@ -186,7 +186,7 @@ const dmPsych = (function() {
   // create tile game
   obj.MakeTileGame = function(hex, tileHit, tileMiss, roundLength, gameType, nTrials, pM, pEM, blockName, roundNum, playOrWatch) {
 
-    let losses = 0, round = 1, streak = 0, trialNumber = 0, tooSlow = null, tooFast = null, latency = null, totalTokens = 0, message;
+    let losses = 0, round = 1, streak = 0, trialNumber = 0, tooSlow = null, tooFast = null, latency = null, getTokens = null, totalTokens = 0, message;
 
     const bernTokens_hit = (gameType == 'bern-mod-PE') ? 15 : 10;
 
@@ -361,7 +361,7 @@ const dmPsych = (function() {
         if (playOrWatch == "play") {
           (data.response && trialNumber < nTrials - 1) ? tooSlow = 0 : tooSlow = 1;
         } else {
-          (latency == 200 && trialNumber < nTrials - 1) ? tooSlow = 0 : tooSlow = 1;
+          (latency == 300 && trialNumber < nTrials - 1) ? tooSlow = 0 : tooSlow = 1;
         }
         data.tooSlow = tooSlow;
         data.trialNum = trialNumber;
@@ -400,7 +400,7 @@ const dmPsych = (function() {
       data: {phase: `feedback`, block: blockName, round: roundNum},
       stimulus: () => {
         if (gameType == 'bern' | gameType == 'bern-mod-PE') {
-          let getTokens = tooSlow ? tokenArray_miss.pop() : tokenArray_hit.pop();
+          getTokens = tooSlow ? tokenArray_miss.pop() : tokenArray_hit.pop();
           if (tooSlow) {
             message = (getTokens && blockName !== "practice") ? tokens_html : noTokens_html;
             if (blockName !== "practice") totalTokens += bernTokens_miss;            
@@ -554,7 +554,7 @@ const dmPsych = (function() {
           losses = 0;
           streak = 0 
         };
-        !tooSlow ? data.jackpot = true : data.jackpot = false;      
+        data.jackpot = getTokens;      
         data.totalTokens = totalTokens;
         data.trialNum = trialNumber;
       },
