@@ -401,13 +401,14 @@ const dmPsych = (function() {
       stimulus: () => {
         if (gameType == 'bern' | gameType == 'bern-mod-PE') {
           getTokens = tooSlow ? tokenArray_miss.pop() : tokenArray_hit.pop();
+          if (blockName !== "practice") {
+            getTokens ? totalTokens += bernTokens_hit : totalTokens += bernTokens_miss;
+          }
           if (tooSlow) {
             message = (getTokens && blockName !== "practice") ? tokens_html : noTokens_html;
-            if (blockName !== "practice") totalTokens += bernTokens_miss;            
             if (tokenArray_miss.length == 0) tokenArray_miss = makeTokenArray_miss();    
           } else {
             message = (!getTokens && blockName !== "practice") ? noTokens_html : tokens_html;
-            if (blockName !== "practice") totalTokens += bernTokens_hit;
             if (tokenArray_hit.length == 0) tokenArray_hit = makeTokenArray_hit();          
           };
           round++;
