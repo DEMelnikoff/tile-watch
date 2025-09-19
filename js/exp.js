@@ -102,10 +102,14 @@ var exp = (function() {
 
         if (gameType == 'bern' | gameType == 'bern-mod-HE' | gameType == 'bern-mod-PE') {
             // attention check #1
-            a1 = 'Earn as many tokens as possible.';
+            a1 = 'The number of tokens I win.';
             a2 = `${hitProb}`;
             a3 = `${missProb}`;
         };
+
+        const tileActivate = (playOrWatch == "play") ? `you activate a tile` :`a tile activates`
+
+        const tileMiss = (playOrWatch == "play") ? `you miss a tile` :`a tile disappears`
 
         const compChk = {
             type: jsPsychSurveyMultiChoice,
@@ -113,19 +117,19 @@ var exp = (function() {
             questions: () => {
                 const round1_Qs = [
                     {
-                      prompt: `What must you do to maximize your odds of winning a $100.00 bonus?`, 
+                      prompt: `What determines your chances of winning a $100.00 bonus?`, 
                       name: 'attnChk1', 
-                      options: ['Earn as many tokens as possible.', 'Finish the game as quickly as possible.'],
+                      options: ['The number of tokens I win.', 'How quickly I finish.'],
                       required: true
                     },
                     {
-                      prompt: `When you activate a tile in the ${gameName}, what are your chances of winning tokens?`, 
+                      prompt: `When ${tileActivate} in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk2', 
                       options: ['10%', '40%', '60%', '90%'], 
                       required: true
                     },
                     {
-                      prompt: `When you miss a tile in the ${gameName}, what are your chances of winning tokens?`, 
+                      prompt: `When ${tileMiss} in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk3', 
                       options: ['10%', '40%', '60%', '90%'], 
                       required: true
@@ -133,13 +137,13 @@ var exp = (function() {
                 ];
                 const round2_Qs = [
                     {
-                      prompt: `When you activate a tile in the ${gameName}, what are your chances of winning tokens?`, 
+                      prompt: `When ${tileActivate}in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk1', 
                       options: ['10%', '40%', '60%', '90%'], 
                       required: true
                     },
                     {
-                      prompt: `When you miss a tile in the ${gameName}, what are your chances of winning tokens?`, 
+                      prompt: `When ${tileMiss} in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk2', 
                       options: ['10%', '40%', '60%', '90%'], 
                       required: true
@@ -207,8 +211,8 @@ var exp = (function() {
                 </div>`,
 
                 `<div class='parent' style='text-align: left'>
-                    <p>During both games, you'll be competing for a chance to win a <b>$100.00 bonus prize</b>.</p>
-                    <p>Specifically, during both the ${settings.gameName_1} and the ${settings.gameName_2}, you'll earn tokens. The tokens you earn will be entered into a lottery, and if one of your tokens is drawn, you'll win $100.00. To maximize your chances of winning a $100.00 bonus, you'll need to earn as many tokens as possible.</p>
+                    <p>The games will give you a chance to win a <b>$100.00 bonus prize</b>.</p>
+                    <p>Specifically, during both the ${settings.gameName_1} and the ${settings.gameName_2}, you'll earn tokens. The tokens you earn will be entered into a lottery, and if one of your tokens is drawn, you'll win $100.00. To maximize your chances of winning a $100.00 bonus, you'll need as many tokens as possible.</p>
                     <p>Continue to learn about and play the ${settings.gameName_1}. After you finish, you'll learn about and play the ${settings.gameName_2}.</p>
                 </div>`],
         show_clickable_nav: true,
@@ -267,7 +271,7 @@ var exp = (function() {
             labels: ['0<br>A little', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Extremely']},
         ];
         this.randomize_question_order = false;
-        this.scale_width = 700;
+        this.scale_width = 600;
         this.data = {round: round};
         this.on_finish =(data) => {
             dmPsych.saveSurveyData(data);
@@ -294,7 +298,7 @@ var exp = (function() {
             labels: ["0<br>Not very", '1', '2', '3', '4', '5', '6', '7', '8', '9', "10<br>Extremely"]},
         ];
         this.randomize_question_order = false;
-        this.scale_width = 700;
+        this.scale_width = 600;
         this.data = {round: round};
         this.on_finish =(data) => {
             dmPsych.saveSurveyData(data);
@@ -309,7 +313,7 @@ var exp = (function() {
             labels: ['0<br>Very Unhappy', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10<br>Very Happy']},
         ];
         this.randomize_question_order = false;
-        this.scale_width = 700;
+        this.scale_width = 600;
         this.data = {round: round};
         this.on_finish =(data) => {
             dmPsych.saveSurveyData(data);

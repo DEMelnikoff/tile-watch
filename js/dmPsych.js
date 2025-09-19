@@ -1996,15 +1996,15 @@ const dmPsych = (function() {
                     <div class="token-text-lose">${signedOutcome} Tokens</div>
                   </div>`,
 
-                  `<div class='parent' style='height: 550px'>
+                  `<div class='parent'>
                     <p>After seeing whether you won tokens or not,<br>
-                    you must press your SPACEBAR to advance to the next tile.</p>
+                    you must press your <strong>SPACEBAR</strong> to advance to the next tile.</p>
                   </div>`];            
           }
           
         } else if (round == 2) {
           if (playOrWatch == "play") {
-            return [`<div class="parent" style="text-align: left; width: 600px">
+            return [`<div class="parent" style="text-align: left; width: 700px">
                       <p>The ${gameName_2} is identical to the ${gameName_1} with three exceptions:</p>
                       <ul>
                         <li>The a tile will turn ${color} when activated.</li>
@@ -2014,7 +2014,7 @@ const dmPsych = (function() {
                       <p>Everything else about the game is the same.</p>
                     </div>`];
           } else {
-            return [`<div class="parent" style="text-align: left; width: 600px">
+            return [`<div class="parent" style="text-align: left; width: 700px">
                       <p>The ${gameName_2} is identical to the ${gameName_1} with three exceptions:</p>
                       <ul>
                         <li>The a tile will turn ${color} when activated.</li>
