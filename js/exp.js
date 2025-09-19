@@ -58,6 +58,10 @@ var exp = (function() {
 
         const gameName = (round == 1) ? gameName_1 : gameName_2;
 
+        const hitProb = Math.round(pEM * 100) + "%"; 
+
+        const missProb = Math.round( (1-pEM) * 100) + "%"; 
+
         const howToEarn = {
             type: jsPsychInstructions,
             pages: dmPsych.tileGame_howToEarn(gameType, gameName_1, gameName_2, pM, pEM, color, hex, roundLength, round),
@@ -89,9 +93,11 @@ var exp = (function() {
         if (gameType == 'bern' | gameType == 'bern-mod-HE' | gameType == 'bern-mod-PE') {
             // attention check #1
             a1 = 'Earn as many tokens as possible.';
-            a2 = 'By activating each individual tile.';
-            a3 = (pM < .5) ? 'Compared to practice, I will have less time to respond.' : (pM > .5) ? 'Compared to practice, I will have more time to respond.' : 'None of the above.';
+            a2 = `${hitProb}`;
+            a3 = `${missProb}`;
         };
+
+        console.log(a2, a3)
 
         const compChk = {
             type: jsPsychSurveyMultiChoice,
@@ -105,29 +111,29 @@ var exp = (function() {
                       required: true
                     },
                     {
-                      prompt: `How do you earn tokens in the ${gameName}?`, 
+                      prompt: `When you activate a tile in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk2', 
-                      options: ['By activating each individual tile.', 'By building streaks.'], 
+                      options: ['10%', '40%', '60%', '90%'], 
                       required: true
                     },
                     {
-                      prompt: `Which statement is true?`, 
+                      prompt: `When you miss a tile in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk3', 
-                      options: ['Compared to practice, I will have less time to respond.', 'Compared to practice, I will have more time to respond.', 'None of the above.'], 
+                      options: ['10%', '40%', '60%', '90%'], 
                       required: true
                     },
                 ];
                 const round2_Qs = [
                     {
-                      prompt: `What must you do to maximize your odds of winning a $100.00 bonus?`, 
+                      prompt: `When you activate a tile in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk1', 
-                      options: ['Earn as many tokens as possible.', 'Finish the game as quickly as possible.'],
+                      options: ['10%', '40%', '60%', '90%'], 
                       required: true
                     },
                     {
-                      prompt: `How do you earn tokens in the ${gameName}?`, 
+                      prompt: `When you miss a tile in the ${gameName}, what are your chances of winning tokens?`, 
                       name: 'attnChk2', 
-                      options: ['By activating each individual tile.', 'By building streaks.'], 
+                      options: ['10%', '40%', '60%', '90%'], 
                       required: true
                     },
                 ];
@@ -135,7 +141,7 @@ var exp = (function() {
                 return (round == 1) ? round1_Qs : round2_Qs;
             },
             on_finish: (data) => {
-                const correctAnswers = (round == 1) ? [a1, a2, a3] : [a1, a2];
+                const correctAnswers = (round == 1) ? [a1, a2, a3] : [a2, a3];
                 const totalErrors = dmPsych.getTotalErrors(data, correctAnswers);
                 data.totalErrors = totalErrors;
             }

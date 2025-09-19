@@ -1918,7 +1918,7 @@ const dmPsych = (function() {
 
                   `<div class='parent'>
                     <p>Missing a tile gives you a <strong>${missProb}</strong> of earning tokens.</p>
-                    <p>Specifically, for every tile you activate, you'll have a <strong>${missProb}</strong> of winning <strong>${bernTokens_hit} tokens</strong>.</p>
+                    <p>Specifically, for every tile you miss, you'll have a <strong>${missProb}</strong> of winning <strong>${bernTokens_hit} tokens</strong>.</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
@@ -1936,9 +1936,13 @@ const dmPsych = (function() {
                       <p>Accordingly, ${fasterOrSlower} during practice.</p>
                   </div>`];
         } else if (round == 2) {
-          html = [`<div class='parent' style='text-align: left'>
-                    <p>The ${gameName_2} is identical to the ${gameName_1} with one exception:</p>
-                    <p>Activating a tile gives you a <strong>${hitProb}</strong> of winning tokens, and missing a tile gives you a <strong>${missProb}</strong> of earning tokens.</p>
+          html = [`<div class="parent" style="text-align: left; width: 600px">
+                    <p>The ${gameName_2} is identical to the ${gameName_1} with three exceptions:</p>
+                    <ul>
+                      <li>The a tile will turn ${color} when activated.</li>
+                      <li>Activating a tile gives you a <strong>${hitProb}</strong> chance of winning tokens.</li>
+                      <li>Missing a tile gives you a <strong>${missProb}</strong> chance of earning tokens.</li>
+                    </ul>
                     <p>Everything else about the game is the same.</p>
                   </div>`];
         };
