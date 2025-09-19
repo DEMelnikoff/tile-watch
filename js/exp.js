@@ -5,12 +5,14 @@ var exp = (function() {
     // randomly assign to conditions and save settings
     const colorOrder = Math.floor(Math.random() * 2);
 
-    const bernoulliVersion = 'bern';
+    const pEMOrder = Math.floor(Math.random() * 2);
 
+    const playOrWatch = ["play", "watch"][Math.floor(Math.random() * 2)];
+    console.log(playOrWatch)
     const settings = {
         pM: .5,
         pM_practice: .5,
-        pEM: [.6, .9],
+        pEM: [[.6, .9], [.9, .6]][pEMOrder],
         gameType: 'bern',
         nTrials: 40,
         basePay: 2.40,
@@ -41,6 +43,9 @@ var exp = (function() {
     // save condition and URL data
     jsPsych.data.addProperties({
         pM: settings.pM,
+        playOrWatch: playOrWatch,
+        pEM_1: settings.pEM[0],
+        pEM_2: settings.pEM[1],
         gameType: settings.gameType,
         basePay: settings.basePay,
         startTime: String(new Date()),
@@ -54,7 +59,7 @@ var exp = (function() {
 
 
     // constructor function for presenting post-practice tile game information and assessing comprehension
-    function MakeTaskInstructions(gameType, gameName_1, gameName_2, color, hex, roundLength, pM, pEM, round) {
+    function MakeTaskInstructions(gameType, gameName_1, gameName_2, color, hex, roundLength, pM, pEM, round, playOrWatch) {
 
         const gameName = (round == 1) ? gameName_1 : gameName_2;
 
@@ -64,7 +69,7 @@ var exp = (function() {
 
         const howToEarn = {
             type: jsPsychInstructions,
-            pages: dmPsych.tileGame_howToEarn(gameType, gameName_1, gameName_2, pM, pEM, color, hex, roundLength, round),
+            pages: dmPsych.tileGame_howToEarn(gameType, gameName_1, gameName_2, pM, pEM, color, hex, roundLength, round, playOrWatch),
             show_clickable_nav: true,
         };
 
@@ -96,8 +101,6 @@ var exp = (function() {
             a2 = `${hitProb}`;
             a3 = `${missProb}`;
         };
-
-        console.log(a2, a3)
 
         const compChk = {
             type: jsPsychSurveyMultiChoice,
@@ -209,11 +212,11 @@ var exp = (function() {
 
     p.round1_howToPlay = {
         type: jsPsychInstructions,
-        pages: dmPsych.tileGame_howToPlay(settings.gameType, settings.gameName_1, settings.color_1, settings.hex_1, settings.roundLength),
+        pages: dmPsych.tileGame_howToPlay(settings.gameType, settings.gameName_1, settings.color_1, settings.hex_1, settings.roundLength, playOrWatch),
         show_clickable_nav: true,
     };
 
-    p.round1_howToEarn = new MakeTaskInstructions(settings.gameType, settings.gameName_1, settings.gameName_2, settings.color_1, settings.hex_1, settings.roundLength, settings.pM, settings.pEM[0], 1);
+    p.round1_howToEarn = new MakeTaskInstructions(settings.gameType, settings.gameName_1, settings.gameName_2, settings.color_1, settings.hex_1, settings.roundLength, settings.pM, settings.pEM[0], 1, playOrWatch);
 
     p.round1_complete = {
         type: jsPsychInstructions,
@@ -221,7 +224,7 @@ var exp = (function() {
         show_clickable_nav: true,
     };
 
-    p.round2_howToEarn = new MakeTaskInstructions(settings.gameType, settings.gameName_1, settings.gameName_2, settings.color_2, settings.hex_2, settings.roundLength, settings.pM, settings.pEM[1], 2);
+    p.round2_howToEarn = new MakeTaskInstructions(settings.gameType, settings.gameName_1, settings.gameName_2, settings.color_2, settings.hex_2, settings.roundLength, settings.pM, settings.pEM[1], 2, playOrWatch);
 
 
    /*
@@ -417,7 +420,6 @@ var exp = (function() {
     *
     */
 
-
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
@@ -431,7 +433,7 @@ var exp = (function() {
 }());
 
 const timeline = [exp.consent, exp.intro, 
-    exp.round1_howToPlay, exp.practice1, exp.round1_howToEarn, exp.round1, exp.round1_Qs, exp.round1_complete, 
+    exp.round1_howToPlay, exp.round1_howToEarn, exp.round1, exp.round1_Qs, exp.round1_complete, 
     exp.round2_howToEarn, exp.round2, exp.round2_Qs, exp.demographics, exp.save_data];
 
 // initiate timeline

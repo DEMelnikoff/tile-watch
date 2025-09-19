@@ -184,7 +184,7 @@ const dmPsych = (function() {
   };
 
   // create tile game
-  obj.MakeTileGame = function(hex, tileHit, tileMiss, roundLength, gameType, nTrials, pM, pEM, blockName, roundNum) {
+  obj.MakeTileGame = function(hex, tileHit, tileMiss, roundLength, gameType, nTrials, pM, pEM, blockName, roundNum, playOrWatch) {
 
     let losses = 0, round = 1, streak = 0, trialNumber = 0, tooSlow = null, tooFast = null, totalTokens = 0, message;
 
@@ -252,15 +252,15 @@ const dmPsych = (function() {
     };
 
     const makeTokenArray_hit = function() {
-      const nTokens = Math.round(nTrials * pEM);
-      const nNoTokens = nTrials - nTokens;
+      const nTokens = Math.round(10 * pEM);
+      const nNoTokens = 10 - nTokens;
       const unshuffledArray = Array(nTokens).fill(true).concat(Array(nNoTokens).fill(false));
       return jsPsych.randomization.repeat(unshuffledArray, 1);
     };
 
     const makeTokenArray_miss = function() {
-      const nNoTokens = Math.round(nTrials * pEM);
-      const nTokens = nTrials - nNoTokens;
+      const nNoTokens = Math.round(10 * pEM);
+      const nTokens = 10 - nNoTokens;
       const unshuffledArray = Array(nTokens).fill(true).concat(Array(nNoTokens).fill(false));
       return jsPsych.randomization.repeat(unshuffledArray, 1);
     };
@@ -1385,7 +1385,7 @@ const dmPsych = (function() {
       return html;
   };
 
-  obj.tileGame_howToPlay = function(gameType, gameName, color, hex, roundLength) {
+  obj.tileGame_howToPlay = function(gameType, gameName, color, hex, roundLength, playOrWatch) {
 
       let html;
 
@@ -1506,44 +1506,56 @@ const dmPsych = (function() {
       };
 
       if (gameType == 'bern' | gameType == 'bern-mod-HE' | gameType == 'bern-mod-PE') {
-          html = [
-              `<div class='parent'>
-                <p>In the ${gameName}, your goal is to achieve successes.</p>
-              </div>`,
+          if (playOrWatch == "play") {
+            return [`<div class='parent'>
+                      <p>In the ${gameName}, grey tiles will flash on your screen.
+                      <br>Your goal is to "activate" these tiles before they disappear.</p>
+                      <div class='box' style='background-color:gray'></div>
+                    </div>`,
 
-              `<div class='parent'>
-                <p>To achieve a success, you must activate the tile grey tile below.</p>
-                <div class='box' style='background-color:gray'></div>
-              </div>`,
+                    `<div class='parent'>
+                      <p>To activate a tile, you must press your SPACEBAR before it disappears.<br>
+                      Whenever you see a tile, you should press your SPACEBAR as fast as possible.</p>
+                      <div class='box' style='background-color:gray'></div>
+                    </div>`,
 
-              `<div class='parent'>
-                <p>The tile will appear on your screen, then quickly disappear. To activate it, you must press your SPACEBAR 
-                before it disappears; whenever you see the tile, you should press your SPACEBAR as fast as possible.</p>
-                <div class='box' style='background-color:gray'></div>
-              </div>`,
+                    `<div class='parent'>
+                      <p>If you activate the tile, it will turn ${color}.</p>
+                      <div class='box' style='background-color:${hex}'></div>
+                    </div>`,
 
-              `<div class='parent'>
-                <p>If you activate the tile, it will turn ${color}.</p>
-                <div class='box' style='background-color:${hex}'></div>
-              </div>`,
+                    `<div class='parent'>
+                      <p>If you respond too slowly, the screen will turn blank.</p>
+                      <div class='box' style='background-color:white'></div>
+                    </div>`];
+          } else {
+            return [`<div class='parent'>
+                      <p>In the ${gameName}, grey tiles will flash on your screen.
+                      <br>Your goal is to keep your attention focused on these tiles.</p>
+                      <div class='box' style='background-color:gray'></div>
+                    </div>`,
 
-              `<div class='parent'>
-                <p>If you respond too slowly, the tile will disappear without being activated.</p>
-                <div class='box' style='background-color:white'></div>
-              </div>`,
+                    `<div class='parent'>
+                    <p>After a gray tile appears on the screen, it will do one of two things: disappear or "activate."</p>
+                    <div class="box" style="background-color:gray"></div>
+                    </div>`,
 
-              `<div class='parent'>
-                <p>To get a feel for the ${gameName}, you'll complete a practice session.</p>
-                <p>Remember: Your goal is to achieve successes by activating the tile.</p>
-                <p>Once you proceed, the practice session will start, so get ready to press your SPACEBAR.</p>
-              </div>`
-          ];
+                    `<div class='parent'>
+                      <p>If the tile activates, it will turn ${color}.</p>
+                      <div class='box' style='background-color:${hex}'></div>
+                    </div>`,
+
+                    `<div class='parent'>
+                      <p>If the tile disappears, the screen will turn blank.</p>
+                      <div class='box' style='background-color:white'></div>
+                    </div>`];
+          }
       };
 
       return html;
   };
 
-  obj.tileGame_howToEarn = function(gameType, gameName_1, gameName_2, pM, pEM, color, hex, roundLength, round) {
+  obj.tileGame_howToEarn = function(gameType, gameName_1, gameName_2, pM, pEM, color, hex, roundLength, round, playOrWatch) {
 
       let html;
 
@@ -1905,13 +1917,8 @@ const dmPsych = (function() {
         const missProb = Math.round( (1-pEM) * 100) + "%"; 
 
         if (round == 1) {
-          html = [`<div class='parent'>
-                    <p>Practice is now complete.</p>
-                    <p>Now that you have a feel for the ${gameName_1}, you'll learn how to earn tokens.</p>
-                    <p>Remember: The more tokens you earn, the better your chances of winning a $100.00 bonus.</p>
-                  </div>`,
-
-                  `<div class='parent'>
+          if (playOrWatch == "play") {
+            return [`<div class='parent'>
                     <p>In the ${gameName_1}, activating a tile gives you a <strong>${hitProb}</strong> of winning tokens.</p>
                     <p>Specifically, for every tile you activate, you'll have a <strong>${hitProb}</strong> of winning <strong>${bernTokens_hit} tokens</strong>.</p>
                   </div>`,
@@ -1929,22 +1936,51 @@ const dmPsych = (function() {
                   `<div class='parent' style='height: 550px'>
                     <p>If you don't win tokens, you'll see this message:</p>
                     <div class="token-text-lose">${signedOutcome} Tokens</div>
+                  </div>`];
+          } else {
+            return [`<div class='parent'>
+                    <p>In the ${gameName_1}, every tile that activates gives you a <strong>${hitProb}</strong> of winning tokens.</p>
+                    <p>Specifically, whenever a tile activates, you'll have a <strong>${hitProb}</strong> of winning <strong>${bernTokens_hit} tokens</strong>.</p>
                   </div>`,
 
-                 `<div class='parent'>
-                      <p>In the ${gameName_1}, you'll have <b>${speed} time</b> to activate the tile compared to the practice session.</p>
-                      <p>Accordingly, ${fasterOrSlower} during practice.</p>
-                  </div>`];
+                  `<div class='parent'>
+                    <p>Every tile that disappears gives you a <strong>${missProb}</strong> of earning tokens.</p>
+                    <p>Specifically, whenever a tile disappears, you'll have a <strong>${missProb}</strong> of winning <strong>${bernTokens_hit} tokens</strong>.</p>
+                  </div>`,
+
+                  `<div class='parent' style='height: 550px'>
+                    <p>If you win tokens, you'll see this message:</p>                
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
+                  </div>`,
+
+                  `<div class='parent' style='height: 550px'>
+                    <p>If you don't win tokens, you'll see this message:</p>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
+                  </div>`];            
+          }
+          
         } else if (round == 2) {
-          html = [`<div class="parent" style="text-align: left; width: 600px">
-                    <p>The ${gameName_2} is identical to the ${gameName_1} with three exceptions:</p>
-                    <ul>
-                      <li>The a tile will turn ${color} when activated.</li>
-                      <li>Activating a tile gives you a <strong>${hitProb}</strong> chance of winning tokens.</li>
-                      <li>Missing a tile gives you a <strong>${missProb}</strong> chance of earning tokens.</li>
-                    </ul>
-                    <p>Everything else about the game is the same.</p>
-                  </div>`];
+          if (playOrWatch == "play") {
+            return [`<div class="parent" style="text-align: left; width: 600px">
+                      <p>The ${gameName_2} is identical to the ${gameName_1} with three exceptions:</p>
+                      <ul>
+                        <li>The a tile will turn ${color} when activated.</li>
+                        <li>Activating a tile gives you a <strong>${hitProb}</strong> chance of winning tokens.</li>
+                        <li>Missing a tile gives you a <strong>${missProb}</strong> chance of earning tokens.</li>
+                      </ul>
+                      <p>Everything else about the game is the same.</p>
+                    </div>`];
+          } else {
+            return [`<div class="parent" style="text-align: left; width: 600px">
+                      <p>The ${gameName_2} is identical to the ${gameName_1} with three exceptions:</p>
+                      <ul>
+                        <li>The a tile will turn ${color} when activated.</li>
+                        <li>Every tile that activates gives you a <strong>${hitProb}</strong> chance of winning tokens.</li>
+                        <li>Every tile that disappears gives you a <strong>${missProb}</strong> chance of earning tokens.</li>
+                      </ul>
+                      <p>Everything else about the game is the same.</p>
+                    </div>`];            
+          }
         };
       };  
 
